@@ -131,6 +131,8 @@ Questions are plain Markdown. Two formats are supported:
 
 Good questions = good extractions. Vague questions return vague passages.
 
+→ See [QUESTION_CRAFTING.md](QUESTION_CRAFTING.md) for a full guide with examples, rules, and failure patterns.
+
 ---
 
 ## Skill Structure
