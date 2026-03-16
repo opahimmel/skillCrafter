@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Lokale Datenbank
+chroma_db/
+
+# PDFs & persönliche Inhalte
+skills/*/sources/
+skills/*/extractions/
+skills/*/curated/
+sources/
+output/
+
+# macOS
+.DS_Store
