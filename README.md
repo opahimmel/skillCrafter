@@ -9,7 +9,7 @@ A local pipeline to extract text passages from PDFs via semantic search. Built o
 1. **Ingest:** PDFs are split into chunks, vectorized using an embedding model, and stored in ChromaDB.
 
 2. **Extract:** A questionnaire is analyzed against ChromaDB. For each question, the n most similar text passages are returned—directly from the PDF.
-3. 
+
 The quality of the extraction depends almost exclusively on the quality of the questions and the source pdf.
 
 ---
