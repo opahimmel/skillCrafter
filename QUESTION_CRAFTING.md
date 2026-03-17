@@ -9,13 +9,46 @@ ChromaDB retrieves passages by **semantic similarity** — it finds text that *m
 
 A vague question returns vague passages. A keyword-dense, concept-anchored question returns the exact paragraphs you need.
 
-**Measured impact on this system:**
+**Measured impact on this system (multilingual-e5-base):**
 
 | Question quality | Avg. similarity score |
 |---|---|
-| Simple bullet points | 0.57 – 0.65 |
-| RAG-optimized format | 0.65 – 0.74 |
-| Best single retrieval | 0.789 |
+| Simple bullet points | 0.65 – 0.70 |
+| RAG-optimized format | 0.70 – 0.80 |
+
+---
+
+## Language
+
+Write queries in the same language as your sources. Same-language matching (EN→EN) is significantly stronger than cross-language matching (DE→EN), even with multilingual models.
+
+If your books are in English, write your questions in English.
+
+---
+
+## The three question types
+
+Before thinking about format, pick the right question type.
+
+### Type A — Technical-precise ❌
+
+> "ATR-based stop-loss calibration against noise-stops on 1-minute bars"
+
+Sounds precise but matches nothing. Books don't write like this. Only use Type A if you're searching for a named formula or method that appears verbatim in the source.
+
+### Type B — Conceptual, short ✅
+
+> "When does a stop loss hurt a mean reversion strategy more than it helps?"
+
+Short, no jargon, direct conceptual question. Matches broad passages. This is the default.
+
+### Type C — Narrative, first person ✅
+
+> "My stop loss keeps getting triggered and then the price immediately reverses. What am I doing wrong?"
+
+Books are full of this narrative form: "I have seen this...", "A trader who...", "The problem occurs when...". Type C matches directly onto those passages.
+
+**Rule:** Only use Type B and Type C. Two questions per topic is enough.
 
 ---
 
@@ -144,6 +177,27 @@ concept_anchor: pricing_and_risk     ❌ too broad, two concepts
 ```
 
 If you have two concept anchors, you have two questions.
+
+---
+
+## Score is not a quality proof
+
+A high score (even STARK ≥ 0.75) only means: *"sounds like it's from the same domain"*.
+
+The model finds semantically similar text — not necessarily text that answers the question.
+
+**The only criterion that matters:**
+> Does the passage answer the question **directly and explicitly** — not just thematically?
+
+Always check manually. High score = candidate, not proof.
+
+---
+
+## When results are poor
+
+1. **Reformulate** — shift from Type A to Type B or C
+2. **Go broader** — move away from your specific setup, toward the underlying concept
+3. **Accept the gap** — some topics simply aren't covered by the available sources. High scores on irrelevant passages = library gap, not a bad question.
 
 ---
 
