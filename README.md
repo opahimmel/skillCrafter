@@ -6,12 +6,11 @@ A local pipeline to extract text passages from PDFs via semantic search. Built o
 
 ## What it does
 
-1. **Ingest:** PDFs werden in Chunks aufgeteilt, per Embedding-Modell vektorisiert und in ChromaDB gespeichert.
-2. **Extract:** Ein Fragenkatalog wird gegen die ChromaDB gestellt. Pro Frage kommen die n ähnlichsten Textpassagen zurück — direkt aus dem PDF, kein LLM.
-3. **Curate:** Du entscheidest welche Passagen relevant sind.
-4. **Craft:** Aus den kuratierten Passagen baust du ein Skill-Dokument.
+1. **Ingest:** PDFs are split into chunks, vectorized using an embedding model, and stored in ChromaDB.
 
-Die Qualität der Extraktion hängt fast ausschließlich von der Qualität der Fragen ab.
+2. **Extract:** A questionnaire is analyzed against ChromaDB. For each question, the n most similar text passages are returned—directly from the PDF.
+3. 
+The quality of the extraction depends almost exclusively on the quality of the questions and the source pdf.
 
 ---
 
@@ -24,7 +23,6 @@ Die Qualität der Extraktion hängt fast ausschließlich von der Qualität der F
 | PDF-Parsing | pypdf |
 | Python | 3.12 |
 
-**Warum multilingual-e5-base:** Das Modell unterstützt Cross-Lingual-Retrieval. Queries auf Deutsch gegen englische Quellen verlieren mit englisch-optimierten Modellen (z.B. nomic-embed-text) typisch 15–20% Similarity-Score. e5-base schließt diesen Gap.
 
 Prefix-Schema: `query: <frage>` beim Retrieval, `passage: <text>` beim Ingest.
 
@@ -55,11 +53,11 @@ python skill.py curate my_skill
 
 ---
 
-## Frageformat — der entscheidende Teil
+## Question Format — the Crucial Part
 
-ChromaDB findet Passagen über Cosine-Similarity zwischen Query-Embedding und Dokument-Embedding. Was zurückkommt ist der Text der dem Embedding der Frage am nächsten liegt — nicht der Text der die Frage inhaltlich beantwortet.
+ChromaDB retrieves passages based on cosine similarity between the query embedding and the document embedding. What it returns is the text that is closest to the embedding of the question — not necessarily the text that actually answers the question.
 
-Das bedeutet: vage Fragen liefern thematisch ähnliche aber inhaltlich nutzlose Passagen. Präzise, keyword-dichte Fragen liefern die richtigen Chunks.
+This means: vague questions yield topically similar but substantively useless passages. Precise, keyword-dense questions yield the correct chunks.
 
 **Einfaches Format:**
 ```markdown
@@ -85,7 +83,7 @@ keywords:
   - Bid-Ask Rauschen
 ```
 
-Das YAML-Block wird nicht für die Suche verwendet — er dient als Dokumentation und erleichtert die spätere Kuration.
+
 
 Vollständige Anleitung: [QUESTION_CRAFTING.md](QUESTION_CRAFTING.md)
 
@@ -115,7 +113,7 @@ python skill.py delete <name>
 | 0.70–0.74 | AUSREICHEND | Passage prüfen |
 | < 0.70 | — | Wird nicht ausgegeben — kein ausreichender Match |
 
-Scores unter dem Threshold bedeuten nicht zwingend einen Fehler im System — oft fehlt das relevante Material einfach in der Bibliothek.
+
 
 ---
 
