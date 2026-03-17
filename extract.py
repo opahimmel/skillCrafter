@@ -20,9 +20,10 @@ from sentence_transformers import SentenceTransformer
 # Config
 # ---------------------------------------------------------------------------
 CHROMA_PATH = os.path.join(os.path.dirname(__file__), "chroma_db")
-MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
-TOP_K = 5
-MIN_SCORE = 0.60
+MODEL_NAME = "intfloat/multilingual-e5-base"
+TOP_K = 10
+MIN_SCORE = 0.70
+SCORE_STRONG = 0.75
 MAX_CHUNKS_PER_SOURCE = 2
 
 
@@ -72,7 +73,7 @@ def parse_questions(catalog_path: str) -> list[dict]:
 def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int, min_score: float = 0.0):
     # Modell laden
     print(f"Lade Embedding-Modell '{MODEL_NAME}' ...")
-    model = SentenceTransformer(MODEL_NAME, trust_remote_code=True)
+    model = SentenceTransformer(MODEL_NAME)
 
     # ChromaDB
     client = chromadb.PersistentClient(path=CHROMA_PATH)
@@ -119,7 +120,7 @@ def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int
 
             # Query-Embedding (nomic asymmetrisches Retrieval: query prefix)
             query_embedding = model.encode(
-                f"search_query: {question}",
+                f"query: {question}",
                 normalize_embeddings=True,
             ).tolist()
 
@@ -152,11 +153,15 @@ def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int
                 chunk_idx = meta.get("chunk_index", "?")
 
                 written += 1
-                out.write(f"**Passage {written}** | Quelle: `{source}` | Chunk #{chunk_idx} | Ähnlichkeit: {similarity}\n\n")
+                if similarity >= SCORE_STRONG:
+                    score_label = "STARK"
+                else:
+                    score_label = "AUSREICHEND"
+                out.write(f"**Passage {written}** | Quelle: `{source}` | Chunk #{chunk_idx} | Score: {similarity} [{score_label}]\n\n")
                 out.write(f"> {doc.strip()}\n\n")
 
             if written == 0:
-                out.write(f"_Keine relevanten Passagen gefunden (min-score: {min_score})._\n\n")
+                out.write(f"_KEIN AUSREICHENDER MATCH — alle {len(docs)} Kandidaten unter Score {min_score}. Wissenslücke in der Bibliothek oder Frage zu spezifisch._\n\n")
 
             out.write("---\n\n")
 
@@ -176,9 +181,9 @@ def main():
     parser.add_argument("--output", default="output/raw_extractions/",
                         help="Ausgabeverzeichnis (default: output/raw_extractions/)")
     parser.add_argument("--top-k", type=int, default=TOP_K,
-                        help=f"Anzahl Passagen pro Frage (default: {TOP_K})")
+                        help=f"Anzahl Kandidaten die abgerufen werden (default: {TOP_K})")
     parser.add_argument("--min-score", type=float, default=MIN_SCORE,
-                        help=f"Minimaler Similarity-Score (default: {MIN_SCORE})")
+                        help=f"Minimaler Similarity-Score – unter diesem Wert = kein Match (default: {MIN_SCORE})")
     args = parser.parse_args()
 
     if not os.path.isfile(args.catalog):

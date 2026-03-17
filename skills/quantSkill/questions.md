@@ -1,815 +1,453 @@
-# Quant Algo Trading — RAG-Optimized Question Catalog
-<!-- ChromaDB / Vector Store optimized. Each entry: query + metadata block. -->
-<!-- Optimization strategy: self-contained, keyword-dense, concept-anchored, no pronouns without referent. -->
-<!-- Duplicates removed, truncated entries completed, typos corrected. -->
+# Skill: VWAP Mean Reversion Strategy
+# Collection: trading_bot_skills
+# Skill-ID: vwap_mr
+# Version: 3.0 – English, B+C variants only
+# Threshold: 0.70
+#
+# Rationale for English:
+#   All source books are written in English. nomic-embed-text-v1.5 is multilingual
+#   but cross-language similarity loses ~5-10% score. English queries → higher scores.
+#
+# Rationale for B+C only (dropping A):
+#   v3 analysis showed A (technical) mostly produces false positives at threshold 0.68.
+#   B (conceptual, short, no jargon) and C (narrative, first-person) consistently
+#   outperform A. C opened the most new matches.
+#
+# Writing style guide for these queries:
+#   B: Short, universal, sounds like a chapter title or section heading in a trading book.
+#      No ticker names, no percentages, no technical jargon.
+#   C: First-person confession or question. Sounds like a trader talking to a mentor,
+#      or the opening anecdote of a book chapter. Use "I have been", "I noticed", "my strategy".
 
 ---
 
-## Stochastische Analysis & Derivate
+## MR-Q01-B
 
----
-
-### Q01
-**query:** "Physisches Maß P vs. risikoneutrales Maß Q in der Derivatepreisbildung: Was ist der Unterschied zwischen der realen Wahrscheinlichkeitsmaßnahme P und dem äquivalenten Martingalmaß Q, wie vollzieht Girsanov's Theorem den Maßwechsel, und warum ist No-Arbitrage-Bewertung von Derivaten nur unter Q konsistent?"
+**query:** "When does mean reversion stop working and what tells you the market has changed?"
 
 ```yaml
-id: Q01
-domain: stochastic_calculus
-subdomain: measure_theory_pricing
-source: Shreve_Stochastic_Calculus_Finance_II
-concept_anchor: risk_neutral_measure
-keywords:
-  - äquivalentes Martingalmaß
-  - physisches Maß P
-  - risikoneutrales Maß Q
-  - Girsanov Theorem
-  - Radon-Nikodym Ableitung
-  - Marktpreisrisiko Lambda
-  - No-Arbitrage
-  - vollständiger Markt
-  - Martingal
-  - Drift-Transformation
-related_concepts:
-  - Black-Scholes PDE
-  - Derivatebewertung
-  - Marktunvollständigkeit
-difficulty: expert
+id: MR-Q01-B
+skill: vwap_mr
+category: strategy
+concept_anchor: vwap_mean_reversion_edge_validity
+variant: conceptual_en
+```
+
+## MR-Q01-C
+
+**query:** "I run a mean reversion strategy on individual stocks intraday. Some days it works perfectly, other days it loses consistently. How do I know whether the market is in a mean-reverting regime or not, and should I just stop trading on the bad days?"
+
+```yaml
+id: MR-Q01-C
+skill: vwap_mr
+category: strategy
+concept_anchor: vwap_mean_reversion_edge_validity
+variant: narrative_en
 ```
 
 ---
 
-### Q02
-**query:** "Itô's Lemma im Vergleich zu klassischem Taylor-Kalkül für stochastische Prozesse: Warum erzeugt die quadratische Variation der Brownschen Bewegung einen zusätzlichen Korrekturterm (dW)²=dt, wie lautet Itô's Lemma für eine Funktion f(t, X_t), und wie leitet man damit die geometrische Brownsche Bewegung und den Log-Return-Prozess her?"
+## MR-Q02-B
+
+**query:** "How far does a price need to deviate from its average before a trade makes sense?"
 
 ```yaml
-id: Q02
-domain: stochastic_calculus
-subdomain: ito_calculus
-source: Shreve_Stochastic_Calculus_Finance_II
-concept_anchor: ito_lemma
-keywords:
-  - Itô-Lemma
-  - quadratische Variation
-  - Brownsche Bewegung
-  - Taylor-Entwicklung
-  - Itô-Integral
-  - geometrische Brownsche Bewegung
-  - Log-Returns
-  - stochastisches Differential
-  - Itô-Korrekturterm
-  - dW squared equals dt
-related_concepts:
-  - Black-Scholes PDE
-  - Derivatebewertung
-  - stochastische Differentialgleichungen
-difficulty: expert
+id: MR-Q02-B
+skill: vwap_mr
+category: strategy
+concept_anchor: entry_band_calibration_vwap
+variant: conceptual_en
+```
+
+## MR-Q02-C
+
+**query:** "My strategy buys when price drops below a reference level. Sometimes these are small dips that snap back immediately, sometimes the stock keeps falling. How do I find the right entry threshold that captures real reversions and avoids catching falling knives?"
+
+```yaml
+id: MR-Q02-C
+skill: vwap_mr
+category: strategy
+concept_anchor: entry_band_calibration_vwap
+variant: narrative_en
 ```
 
 ---
 
-### Q03
-**query:** "Black-Scholes PDE Herleitung über Delta-Hedging-Argument: Wie konstruiert man ein risikoloses Portfolio aus Option und Basiswert, welche Black-Scholes Differentialgleichung ergibt sich aus No-Arbitrage, und welche versteckten Modellannahmen (Transaktionskosten, Volatilität, Leerverkäufe, Kontinuität) werden dabei implizit gemacht?"
+## MR-Q03-B
+
+**query:** "How often does a trade need to win to be profitable when winners are bigger than losers?"
 
 ```yaml
-id: Q03
-domain: stochastic_calculus
-subdomain: option_pricing
-source: Shreve_Stochastic_Calculus_Finance_II
-concept_anchor: black_scholes_pde
-keywords:
-  - Black-Scholes PDE
-  - Delta-Hedging
-  - risikoloses Portfolio
-  - No-Arbitrage
-  - kontinuierliches Rebalancing
-  - konstante Volatilität
-  - Transaktionskosten
-  - partielle Differentialgleichung
-  - Replikationsstrategie
-related_concepts:
-  - Itô-Lemma
-  - risikoneutrales Maß
-  - Derivatebewertung
-difficulty: expert
+id: MR-Q03-B
+skill: vwap_mr
+category: risk
+concept_anchor: risk_reward_breakeven_winrate
+variant: conceptual_en
+```
+
+## MR-Q03-C
+
+**query:** "I lose more often than I win but my winning trades are larger than my losing trades. Is that enough to be profitable in the long run, and how sensitive is the whole thing to a small drop in win rate?"
+
+```yaml
+id: MR-Q03-C
+skill: vwap_mr
+category: risk
+concept_anchor: risk_reward_breakeven_winrate
+variant: narrative_en
 ```
 
 ---
 
-### Q04
-**query:** "Stopping Times und Amerikanische Optionen in der stochastischen Kontrolltheorie: Was ist eine Stopping Time im Sinne einer Filtration F_t, wie formuliert man die Bewertung amerikanischer Optionen als Optimal-Stopping-Problem, und wie bestimmt man die optimale Ausübungsgrenze S*(t) als freien Rand?"
+## MR-Q04-B
+
+**query:** "When does a stop loss hurt a mean reversion strategy more than it helps?"
 
 ```yaml
-id: Q04
-domain: stochastic_calculus
-subdomain: optimal_stopping
-source: Shreve_Stochastic_Calculus_Finance_I
-concept_anchor: stopping_time
-keywords:
-  - Stopping Time
-  - Filtration
-  - adaptierter Prozess
-  - Optimal Stopping
-  - amerikanische Option
-  - freier Rand
-  - Longstaff-Schwartz
-  - frühe Ausübung
-  - Martingal-Optimal-Stopping
-  - HJB-Gleichung
-related_concepts:
-  - stochastische Kontrolle
-  - Bermudan Options
-  - dynamische Programmierung
-difficulty: expert
+id: MR-Q04-B
+skill: vwap_mr
+category: risk
+concept_anchor: stop_loss_noise_calibration
+variant: conceptual_en
+```
+
+## MR-Q04-C
+
+**query:** "My stop loss keeps getting triggered and then the price immediately reverses back in my direction. The stop is not protecting me — it is costing me money on every trade. What am I doing wrong and how should I set the stop correctly for a mean reversion strategy?"
+
+```yaml
+id: MR-Q04-C
+skill: vwap_mr
+category: risk
+concept_anchor: stop_loss_noise_calibration
+variant: narrative_en
 ```
 
 ---
 
-## Zeitreihenanalyse & Statistische Modellierung
+## MR-Q05-B
 
----
-
-### Q05
-**query:** "ARCH-Modell vs. GARCH(1,1) für Volatilitätsmodellierung in Finanzzeitreihen: Was ist der strukturelle Unterschied zwischen ARCH(q) und GARCH(p,q), warum erklärt GARCH(1,1) Volatilitätsclustering mit nur drei Parametern, was bedeutet α+β nahe 1 für Persistenz, und wann ist Integrated GARCH (IGARCH) problematisch für Risikomodelle?"
+**query:** "How do you avoid fooling yourself when testing whether a filter improves a strategy?"
 
 ```yaml
-id: Q05
-domain: time_series
-subdomain: volatility_modeling
-source: Tsay_Analysis_Financial_Time_Series
-concept_anchor: garch_model
-keywords:
-  - ARCH
-  - GARCH
-  - IGARCH
-  - EGARCH
-  - GJR-GARCH
-  - Volatilitätsclustering
-  - Persistenz
-  - Maximum Likelihood Schätzung
-  - bedingte Heteroskedastizität
-  - Volatilitätsprozess
-related_concepts:
-  - Zeitreihenmodellierung
-  - Risikomodelle
-  - Expected Shortfall
-difficulty: intermediate
+id: MR-Q05-B
+skill: vwap_mr
+category: regime
+concept_anchor: trend_filter_sma_length_optimization
+variant: conceptual_en
+```
+
+## MR-Q05-C
+
+**query:** "I have been tweaking my backtest for weeks and every change I make improves the results. But now I am worried that the strategy only looks good because I have fitted it to past data. How do I know whether the improvements are real or whether I am just overfitting?"
+
+```yaml
+id: MR-Q05-C
+skill: vwap_mr
+category: regime
+concept_anchor: trend_filter_sma_length_optimization
+variant: narrative_en
 ```
 
 ---
 
-### Q06
-**query:** "Spurious Regression vs. Kointegration in Finanzzeitreihen: Warum zeigen zwei unabhängige I(1)-Prozesse fälschlicherweise hohes R², wie testet man echte Kointegration mit dem Engle-Granger-Test und dem Johansen-Test auf Rang der Kointegrationsmatrix, und welche Bedingungen muss Kointegration erfüllen damit ein Mean-Reversion-Pairs-Trade tatsächlich profitabel ist?"
+## MR-Q06-B
+
+**query:** "In which market conditions should you stop trading a mean reversion strategy?"
 
 ```yaml
-id: Q06
-domain: time_series
-subdomain: cointegration
-source: Tsay_Analysis_Financial_Time_Series
-concept_anchor: cointegration_test
-keywords:
-  - Spurious Regression
-  - Kointegration
-  - Engle-Granger Test
-  - Johansen Test
-  - I(1)-Prozess
-  - Einheitswurzel
-  - ADF-Test
-  - Fehlerkorrekturmodell
-  - Kointegrationsvektor
-  - Mean Reversion
-related_concepts:
-  - Pairs Trading
-  - Stationarität
-  - Error Correction Model
-difficulty: intermediate
+id: MR-Q06-B
+skill: vwap_mr
+category: regime
+concept_anchor: market_regime_filter_vix_spy
+variant: conceptual_en
+```
+
+## MR-Q06-C
+
+**query:** "My mean reversion strategy works well in calm markets but bleeds money whenever there is a crash or a period of high volatility. How do I detect these dangerous regimes in advance and pause my bot before the losses accumulate?"
+
+```yaml
+id: MR-Q06-C
+skill: vwap_mr
+category: regime
+concept_anchor: market_regime_filter_vix_spy
+variant: narrative_en
 ```
 
 ---
 
-### Q07
-**query:** "Copula-Modelle in der Risikomodellierung — Gaussian Copula vs. Heavy-Tail Copulas: Was ist eine Copula nach Sklar's Theorem, was ist der Tail-Dependence-Koeffizient, warum unterschätzt die Gaussian Copula joint extreme events massiv, und welche Student-t-Copula oder Clayton-Copula sind für Stressszenarien in Finanzportfolios geeigneter?"
+## MR-Q07-B
+
+**query:** "How do you honestly test whether a trading strategy works and is not just a lucky fit to historical data?"
 
 ```yaml
-id: Q07
-domain: statistics
-subdomain: dependence_modeling
-source: Ruppert_Statistics_Data_Analysis_Financial_Engineering
-concept_anchor: copula_tail_dependence
-keywords:
-  - Copula
-  - Sklar Theorem
-  - Gaussian Copula
-  - Student-t Copula
-  - Clayton Copula
-  - Tail Dependence
-  - Marginalverteilung
-  - Abhängigkeitsstruktur
-  - joint extreme events
-  - Korrelationsbreak
-related_concepts:
-  - CDO-Bewertung
-  - Risikomodellierung
-  - Stresstest
-difficulty: expert
+id: MR-Q07-B
+skill: vwap_mr
+category: backtest
+concept_anchor: walk_forward_validation_methodology
+variant: conceptual_en
+```
+
+## MR-Q07-C
+
+**query:** "My backtest looks excellent. But I have no idea whether to trust it or whether it is just fitting noise in my historical data. What would convince me that the edge is real and not an artifact of how I tested the strategy?"
+
+```yaml
+id: MR-Q07-C
+skill: vwap_mr
+category: backtest
+concept_anchor: walk_forward_validation_methodology
+variant: narrative_en
 ```
 
 ---
 
-### Q08
-**query:** "Expected Shortfall (CVaR) Schätzung aus historischen Finanzdaten: Wie berechnet man ES_α als bedingten Erwartungswert jenseits des VaR, welche Probleme entstehen bei kleinen Stichproben (α=0.99, 250 Handelstage), wie hilft Extreme Value Theory (GPD-Fit) diese zu überwinden, und warum ist ES für Basel IV die regulatorische Standardkennzahl statt VaR?"
+## MR-Q08-B
+
+**query:** "Why do most traders perform worse live than their backtest predicted?"
 
 ```yaml
-id: Q08
-domain: statistics
-subdomain: risk_measures
-source: Ruppert_Statistics_Data_Analysis_Financial_Engineering
-concept_anchor: expected_shortfall_estimation
-keywords:
-  - Expected Shortfall
-  - CVaR
-  - Conditional Value at Risk
-  - Value at Risk
-  - Extreme Value Theory
-  - Generalized Pareto Distribution
-  - Backtesting
-  - Elicitability
-  - Basel IV
-  - Stichprobenproblem
-related_concepts:
-  - Risikomodelle
-  - GARCH
-  - Stresstesting
-difficulty: expert
+id: MR-Q08-B
+skill: vwap_mr
+category: backtest
+concept_anchor: slippage_cost_assumptions_realism
+variant: conceptual_en
+```
+
+## MR-Q08-C
+
+**query:** "My backtest is profitable but I am losing money in live trading. The only explanation I can think of is that my actual fill prices are worse than what the backtest assumed. How large is this effect typically, and how should I model transaction costs more realistically?"
+
+```yaml
+id: MR-Q08-C
+skill: vwap_mr
+category: backtest
+concept_anchor: slippage_cost_assumptions_realism
+variant: narrative_en
 ```
 
 ---
 
-## Machine Learning für Finanzmärkte
+## MR-Q09-B
 
----
-
-### Q09
-**query:** "Multiple Testing Problem in quantitativen Backtests und der Deflated Sharpe Ratio nach López de Prado: Wie quantifiziert man den Selection Bias bei N getesteten Strategien, wie korrigiert der Deflated Sharpe Ratio (DSR) für nicht-normalverteilte Returns und Strategieanzahl, und wie sollte ein Backtesting-Logbuch strukturiert sein um Multiple Testing nachweisbar zu kontrollieren?"
+**query:** "At what Sharpe ratio should you become suspicious that a backtest result is too good to be true?"
 
 ```yaml
-id: Q09
-domain: machine_learning_finance
-subdomain: backtesting_validation
-source: Lopez_de_Prado_Advances_Financial_ML
-concept_anchor: deflated_sharpe_ratio
-keywords:
-  - Multiple Testing
-  - Deflated Sharpe Ratio
-  - Selection Bias
-  - Overfitting
-  - Backtesting
-  - Sharpe Ratio
-  - Non-Normalität
-  - False Discovery Rate
-  - Strategy Logbuch
-  - p-hacking
-related_concepts:
-  - Cross-Validation
-  - Walk-Forward Testing
-  - CPCV
-difficulty: expert
+id: MR-Q09-B
+skill: vwap_mr
+category: backtest
+concept_anchor: overfitting_diagnosis_backtest_period
+variant: conceptual_en
+```
+
+## MR-Q09-C
+
+**query:** "My backtest shows a Sharpe ratio of almost 3.0 on a single stock ticker over six months. My colleague says that is too good to be real and I must have overfit the strategy. Is he right, and how do I tell whether my results reflect genuine edge or just overfitting?"
+
+```yaml
+id: MR-Q09-C
+skill: vwap_mr
+category: backtest
+concept_anchor: overfitting_diagnosis_backtest_period
+variant: narrative_en
 ```
 
 ---
 
-### Q10
-**query:** "Meta-Labeling in Financial Machine Learning als zweistufige Klassifikationsarchitektur: Wie trennt Meta-Labeling Signalrichtung (primäres Modell) von Signalqualität (sekundäres binäres Modell), welchen Precision-Recall-Tradeoff erzeugt das für seltene Trade-Signale, und wann ist Meta-Labeling gegenüber direkter Multiklassen-Klassifikation strukturell überlegen?"
+## MR-Q10-B
+
+**query:** "Is it better to specialize in a few instruments or trade many simultaneously?"
 
 ```yaml
-id: Q10
-domain: machine_learning_finance
-subdomain: labeling_strategy
-source: Lopez_de_Prado_Advances_Financial_ML
-concept_anchor: meta_labeling
-keywords:
-  - Meta-Labeling
-  - primäres Modell
-  - sekundäres Modell
-  - Precision
-  - Recall
-  - binäre Klassifikation
-  - Signalfilterung
-  - Modellarchitektur
-  - Klassifikation Finanzdaten
-  - asymmetrische Probleme
-related_concepts:
-  - Feature Engineering
-  - Triple-Barrier Method
-  - Position Sizing
-difficulty: expert
+id: MR-Q10-B
+skill: vwap_mr
+category: universe
+concept_anchor: universe_size_position_diversification
+variant: conceptual_en
+```
+
+## MR-Q10-C
+
+**query:** "I trade sixteen different stocks simultaneously and thought I was well diversified. But whenever the market sells off, all my positions lose money at the same time. Do I have a diversification problem and how do I fix it?"
+
+```yaml
+id: MR-Q10-C
+skill: vwap_mr
+category: universe
+concept_anchor: universe_size_position_diversification
+variant: narrative_en
 ```
 
 ---
 
-### Q11
-**query:** "Purging und Embargoing als Cross-Validation-Korrekturen für Finanzzeitreihen: Warum erzeugt Standard K-Fold Cross-Validation mit shuffling Look-Ahead Bias in Zeitreihendaten, wie entsteht Label-Overlap-Leakage bei überlappenden Beobachtungsfenstern, wie eliminiert Purging den Overlap aus dem Trainingsset, wie schützt Embargoing gegen Autokorrelations-Leakage, und was ist Combinatorial Purged Cross-Validation (CPCV)?"
+## MR-Q11-B
+
+**query:** "Does an ETF behave differently intraday than the individual stocks it contains?"
 
 ```yaml
-id: Q11
-domain: machine_learning_finance
-subdomain: cross_validation
-source: Lopez_de_Prado_Advances_Financial_ML
-concept_anchor: purging_embargoing
-keywords:
-  - Purging
-  - Embargoing
-  - K-Fold Cross-Validation
-  - Look-Ahead Bias
-  - Label Overlap
-  - Zeitreihen Cross-Validation
-  - CPCV
-  - Trainingsset
-  - Autokorrelation
-  - Backtesting Bias
-related_concepts:
-  - Walk-Forward
-  - Overfitting
-  - Feature Leakage
-difficulty: expert
+id: MR-Q11-B
+skill: vwap_mr
+category: universe
+concept_anchor: spy_etf_vwap_mean_reversion_suitability
+variant: conceptual_en
+```
+
+## MR-Q11-C
+
+**query:** "I included SPY in my universe because it is very liquid. But SPY moves differently from my individual stock positions — it seems to have less idiosyncratic noise. Should I trade SPY the same way I trade single stocks, or does it need a different approach?"
+
+```yaml
+id: MR-Q11-C
+skill: vwap_mr
+category: universe
+concept_anchor: spy_etf_vwap_mean_reversion_suitability
+variant: narrative_en
 ```
 
 ---
 
-### Q12
-**query:** "Dollar Bars vs. Time Bars als alternative Bar-Aggregation für algorithmisches Trading: Warum sind time-basierte OHLCV-Bars heteroskedastisch und haben schlechtere statistische Eigenschaften, wie normalisieren Dollar Bars (Threshold auf kumuliertes Dollar-Volumen) den Informationsfluss, und wie verbessert das IID-Annäherung, Volatilitätsstationarität und Feature-Qualität für ML-Modelle?"
+## MR-Q12-B
+
+**query:** "Why is the first half hour after market open dangerous for intraday strategies?"
 
 ```yaml
-id: Q12
-domain: machine_learning_finance
-subdomain: data_sampling
-source: Lopez_de_Prado_Advances_Financial_ML
-concept_anchor: dollar_bars
-keywords:
-  - Dollar Bars
-  - Time Bars
-  - Volume Bars
-  - Tick Bars
-  - Heteroskedastizität
-  - IID
-  - Informationsfluss
-  - VPIN
-  - Bar-Aggregation
-  - Feature Engineering
-related_concepts:
-  - VPIN
-  - Market Microstructure
-  - ML Feature Engineering
-difficulty: intermediate
+id: MR-Q12-B
+skill: vwap_mr
+category: timing
+concept_anchor: opening_skip_calibration
+variant: conceptual_en
+```
+
+## MR-Q12-C
+
+**query:** "I start trading at exactly 09:30 but my worst trades always happen in the first few minutes after the open. After that my performance improves significantly. Should I just skip the opening period entirely, and if so how many minutes should I wait?"
+
+```yaml
+id: MR-Q12-C
+skill: vwap_mr
+category: timing
+concept_anchor: opening_skip_calibration
+variant: narrative_en
 ```
 
 ---
 
-### Q13
-**query:** "Hierarchical Risk Parity (HRP) als Alternative zur Mean-Variance-Optimierung bei der Portfoliokonstruktion: Wie nutzt HRP hierarchisches Clustering auf der Korrelationsmatrix für Quasi-Diagonalisierung, warum ist das Invertieren der Kovarianzmatrix in MVO bei hoher Konditionszahl instabil, und wie erklärt die Recursive-Bisection-Gewichtszuweisung die überlegene Out-of-Sample-Performance von HRP?"
+## MR-Q13-B
+
+**query:** "What is the best way to close positions at end of day with minimal slippage?"
 
 ```yaml
-id: Q13
-domain: machine_learning_finance
-subdomain: portfolio_construction
-source: Lopez_de_Prado_ML_Asset_Managers
-concept_anchor: hierarchical_risk_parity
-keywords:
-  - Hierarchical Risk Parity
-  - HRP
-  - Mean-Variance-Optimierung
-  - Kovarianzmatrix
-  - Konditionszahl
-  - hierarchisches Clustering
-  - Quasi-Diagonalisierung
-  - Recursive Bisection
-  - Out-of-Sample
-  - Portfoliostabilität
-related_concepts:
-  - Black-Litterman
-  - Minimum Variance Portfolio
-  - Diversifikation
-difficulty: expert
+id: MR-Q13-B
+skill: vwap_mr
+category: timing
+concept_anchor: eod_close_slippage_market_orders
+variant: conceptual_en
+```
+
+## MR-Q13-C
+
+**query:** "I need to close all my positions before the market closes every day. When I use market orders I get poor fills. Is there a better order type I should use, and does it matter whether I send the orders fifteen minutes before close or right at the close?"
+
+```yaml
+id: MR-Q13-C
+skill: vwap_mr
+category: timing
+concept_anchor: eod_close_slippage_market_orders
+variant: narrative_en
 ```
 
 ---
 
-## Market Microstructure
+## MR-Q14-B
 
----
-
-### Q14
-**query:** "Kyle (1985) Marktmodell für Informed Trading und Preisimpact: Wie bestimmt der strategisch handelnde Insider seine optimale Handelsmenge, wie setzt der Market Maker den Preis P als lineare Funktion des beobachteten Orderflows y=x+u, was misst Kyle's Lambda als Illiquiditätsmaß, und wie schätzt VPIN (Volume-synchronized Probability of Informed Trading) Lambda empirisch aus Handelsdaten?"
+**query:** "How long do you need to observe a strategy before trusting it with real money?"
 
 ```yaml
-id: Q14
-domain: market_microstructure
-subdomain: informed_trading
-source: OHara_Market_Microstructure_Theory
-concept_anchor: kyle_model
-keywords:
-  - Kyle Modell
-  - Informed Trading
-  - Orderflow
-  - Market Maker
-  - Kyle Lambda
-  - Illiquidität
-  - VPIN
-  - adverse selection
-  - strategischer Handel
-  - lineare Gleichgewichtspreissetzung
-related_concepts:
-  - Adverse Selection
-  - Bid-Ask Spread
-  - VPIN
-difficulty: expert
+id: MR-Q14-B
+skill: vwap_mr
+category: roadmap
+concept_anchor: paper_trading_duration_validation
+variant: conceptual_en
+```
+
+## MR-Q14-C
+
+**query:** "My backtest convinces me. I want to go live. But I am afraid the backtest is misleading me. How long should I paper trade, and what specific numbers need to check out before I risk real capital?"
+
+```yaml
+id: MR-Q14-C
+skill: vwap_mr
+category: roadmap
+concept_anchor: paper_trading_duration_validation
+variant: narrative_en
 ```
 
 ---
 
-### Q15
-**query:** "Almgren-Chriss Framework für optimale Execution und Preisimpact-Modellierung: Was ist der Unterschied zwischen temporärem und permanentem Preisimpact, wie minimiert Almgren-Chriss den Erwartungswert der Execution-Kosten plus Lambda mal Varianz über eine optimale Execution-Trajektorie, warum führt Risikoaversion zu Front-Loading der Execution, und welche Annahmen versagen in realen Hochfrequenzmärkten?"
+## MR-Q15-B
+
+**query:** "When does adding machine learning to a trading strategy make it better, and when does it make it worse?"
 
 ```yaml
-id: Q15
-domain: market_microstructure
-subdomain: optimal_execution
-source: Harris_Trading_Exchanges / Cartea_Algorithmic_HFT
-concept_anchor: almgren_chriss
-keywords:
-  - Almgren-Chriss
-  - Preisimpact
-  - temporärer Preisimpact
-  - permanenter Preisimpact
-  - optimale Execution
-  - Execution-Trajektorie
-  - Risikoaversion
-  - TWAP
-  - Implementation Shortfall
-  - Varianz-Erwartungswert-Tradeoff
-related_concepts:
-  - TWAP
-  - VWAP
-  - Obizhaeva-Wang
-difficulty: expert
+id: MR-Q15-B
+skill: vwap_mr
+category: roadmap
+concept_anchor: ml_filter_phase2_timing_requirements
+variant: conceptual_en
+```
+
+## MR-Q15-C
+
+**query:** "My rule-based strategy works well. I want to add a machine learning filter to remove bad trades. But I am worried the ML model will block the good trades and only learn noise from my limited data. How do I approach this correctly without destroying the edge I already have?"
+
+```yaml
+id: MR-Q15-C
+skill: vwap_mr
+category: roadmap
+concept_anchor: ml_filter_phase2_timing_requirements
+variant: narrative_en
 ```
 
 ---
 
-### Q16
-**query:** "Adverse Selection im Market Making und Glosten-Milgrom (1985) Bid-Ask Spread Herleitung: Wie entsteht adverse selection wenn informierte Trader gegen uninformierte Market Maker handeln, wie leiten Glosten-Milgrom den Gleichgewichts-Spread als Funktion des Anteils informierter Trader und des Informationsvorsprungs ab, und wie zerlegt man den empirischen Spread in adverse-selection-, order-processing- und inventory-Komponenten?"
+## MR-Q16-B
+
+**query:** "Is it better to react to market events as they happen or to poll prices at regular intervals?"
 
 ```yaml
-id: Q16
-domain: market_microstructure
-subdomain: bid_ask_spread
-source: OHara_Market_Microstructure_Theory
-concept_anchor: glosten_milgrom
-keywords:
-  - Adverse Selection
-  - Market Making
-  - Glosten-Milgrom
-  - Bid-Ask Spread
-  - informierter Trader
-  - Noise Trader
-  - Spread-Zerlegung
-  - inventory risk
-  - order processing cost
-  - Gleichgewichtspreissetzung
-related_concepts:
-  - Kyle Modell
-  - Kyle Lambda
-  - Market Maker Strategie
-difficulty: expert
+id: MR-Q16-B
+skill: vwap_mr
+category: arch
+concept_anchor: polling_vs_eventdriven_ibkr_data
+variant: conceptual_en
+```
+
+## MR-Q16-C
+
+**query:** "My trading bot checks for new prices every minute. A friend says I should use callbacks so the program reacts immediately when a new bar arrives instead of polling on a schedule. What is the practical difference for a one-minute bar strategy and is it worth the effort to rewrite?"
+
+```yaml
+id: MR-Q16-C
+skill: vwap_mr
+category: arch
+concept_anchor: polling_vs_eventdriven_ibkr_data
+variant: narrative_en
 ```
 
 ---
 
-### Q17
-**query:** "Avellaneda-Stoikov Market-Making-Modell als stochastisches Kontrollproblem: Wie formuliert man das Market-Making-Problem mit Inventar q_t, Midprice S_t (Brownsche Bewegung) und Poisson-Ankunftsraten λ(δ)=Ae^{-κδ} als HJB-Gleichung, wie lautet der optimale Reservierungspreis r_t=S_t−q_t·γσ²(T−t) für Inventaradjustierung, und wie bestimmt sich der optimale Spread δ* in Abhängigkeit von Risikoaversion, Volatilität und Restlaufzeit?"
+## Metadaten
 
 ```yaml
-id: Q17
-domain: market_microstructure
-subdomain: market_making_models
-source: Cartea_Algorithmic_HFT
-concept_anchor: avellaneda_stoikov
-keywords:
-  - Avellaneda-Stoikov
-  - stochastisches Kontrollproblem
-  - Market Making
-  - HJB-Gleichung
-  - Reservierungspreis
-  - Inventarrisiko
-  - Poisson-Prozess
-  - optimaler Spread
-  - Risikoaversion
-  - dynamische Programmierung
-related_concepts:
-  - Stochastische Kontrolle
-  - Stopping Time
-  - Almgren-Chriss
-difficulty: expert
-```
-
----
-
-## Portfolio- & Risikomanagement
-
----
-
-### Q18
-**query:** "Fundamental Law of Active Management nach Grinold-Kahn — IR=IC·√BR: Was bedeuten Information Ratio, Information Coefficient und Breadth in der Formel IR=IC·√BR, warum impliziert das Diversifikation über viele unabhängige Signale statt über Assets, welche Annahmen (Unabhängigkeit der Wetten, konstantes IC) verletzt die Praxis, und wie korrigiert die Clarke-Erweiterung für Korrelation zwischen Signalen?"
-
-```yaml
-id: Q18
-domain: portfolio_management
-subdomain: active_management
-source: Grinold_Kahn_Active_Portfolio_Management
-concept_anchor: fundamental_law_active_management
-keywords:
-  - Fundamental Law of Active Management
-  - Information Ratio
-  - Information Coefficient
-  - Breadth
-  - Signaldiversifikation
-  - Alpha-Zerlegung
-  - Clarke-Erweiterung
-  - aktives Management
-  - Wetten-Unabhängigkeit
-  - Faktorkorrelation
-related_concepts:
-  - Factor Investing
-  - Alpha-Generierung
-  - Portfolio-Optimierung
-difficulty: intermediate
-```
-
----
-
-### Q19
-**query:** "Value, Momentum und Carry als Risikoprämien — ökonomische Begründung und Verhalten in Krisen: Was sind die Risk-Based vs. Behavioral Erklärungen für Value- (Distress Risk), Momentum- (Investor Underreaction, Momentum Crashes) und Carry-Prämien (UIP-Verletzung, Peso Problem), wie zeitvariabel sind diese Prämien, und warum sind alle drei in Marktkrisen negativ korreliert?"
-
-```yaml
-id: Q19
-domain: portfolio_management
-subdomain: factor_investing
-source: Ilmanen_Expected_Returns
-concept_anchor: risk_premia_value_momentum_carry
-keywords:
-  - Value-Prämie
-  - Momentum-Prämie
-  - Carry-Prämie
-  - Risikoprämien
-  - UIP-Verletzung
-  - Peso Problem
-  - Momentum Crash
-  - Distress Risk
-  - zeitvariante Prämien
-  - Behavioral Finance
-related_concepts:
-  - Fama-French Faktoren
-  - AQR
-  - Multi-Factor-Portfolio
-difficulty: intermediate
-```
-
----
-
-### Q20
-**query:** "Black-Litterman Portfoliooptimierung als Bayesianisches Framework gegen Konditionszahlprobleme: Wie leitet man die impliziten Gleichgewichtsrenditen Π durch Reverse Optimization aus Marktkapitalisierungsgewichten her, wie werden Investor-Views als P·μ=Q+ε_v mit Konfidenzmatrix Ω formuliert, wie lautet die Black-Litterman Posterior-Formel μ_BL, und wie kalibriert man τ und Ω in der Praxis?"
-
-```yaml
-id: Q20
-domain: portfolio_management
-subdomain: portfolio_optimization
-source: Grinold_Kahn_Active_Portfolio_Management
-concept_anchor: black_litterman
-keywords:
-  - Black-Litterman
-  - Reverse Optimization
-  - Gleichgewichtsrenditen
-  - Prior
-  - Posterior
-  - Konfidenzmatrix
-  - Bayesianische Portfoliooptimierung
-  - Kovarianzmatrix Kondition
-  - Investor Views
-  - Shrinkage
-related_concepts:
-  - Mean-Variance-Optimierung
-  - HRP
-  - Portfoliokonstruktion
-difficulty: expert
-```
-
----
-
-## Volatilität & Derivate
-
----
-
-### Q21
-**query:** "Heston Stochastic Volatility Modell und Volatility Surface Kalibrierung: Wie modelliert Heston die stochastische Varianz dv=κ(θ-v)dt+ξ√v·dW² mit Leverage-Korrelation ρ, welche Eigenschaften der empirischen Volatility Surface (Skew durch ρ<0, Smile durch vol-of-vol ξ) erklärt Heston besser als Black-Scholes, und wie kalibriert man Heston-Parameter via Fourier-Inversion (Carr-Madan) auf Marktpreise?"
-
-```yaml
-id: Q21
-domain: derivatives_volatility
-subdomain: stochastic_vol_models
-source: Gatheral_Volatility_Surface
-concept_anchor: heston_model
-keywords:
-  - Heston Modell
-  - stochastische Volatilität
-  - Volatility Surface
-  - Volatility Smile
-  - Volatility Skew
-  - Leverage Effect
-  - vol-of-vol
-  - Fourier-Inversion
-  - Carr-Madan
-  - Kalibrierung
-related_concepts:
-  - SABR Modell
-  - Rough Volatility
-  - Black-Scholes
-difficulty: expert
-```
-
----
-
-### Q22
-**query:** "Rough Volatility und fraktionale Brownsche Bewegung — Paradigmenwechsel in der Volatilitätsmodellierung: Was zeigt Gatheral-Jaisson-Rosenbaum (2018) über den Hurst-Exponenten H≈0.1 von realisierter Volatilität, was bedeutet H<0.5 für die Rauhigkeit (Anti-Persistenz) des Volatilitätsprozesses, und warum kann das Rough Bergomi Modell den kurzfristigen Volatility-Skew ohne Sprungprozesse erklären?"
-
-```yaml
-id: Q22
-domain: derivatives_volatility
-subdomain: rough_volatility
-source: Gatheral_Volatility_Surface
-concept_anchor: rough_volatility
-keywords:
-  - Rough Volatility
-  - fraktionale Brownsche Bewegung
-  - Hurst-Exponent
-  - Anti-Persistenz
-  - Rough Bergomi
-  - Rough Heston
-  - kurzfristiger Skew
-  - Volatilitätsprozess
-  - Gatheral Jaisson Rosenbaum
-  - BSS-Prozess
-related_concepts:
-  - Heston Modell
-  - Volatility Surface
-  - Sprungdiffusionsmodelle
-difficulty: expert
-```
-
----
-
-### Q23
-**query:** "Vanna-Volga Pricing für exotische Optionen im FX-Markt als hedging-basierter Ansatz: Wie konstruiert man ein Replikationsportfolio aus drei Vanillas (ATM, 25-Delta Call, 25-Delta Put) das Vega, Vanna (∂²V/∂S∂σ) und Volga (∂²V/∂σ²) der exotischen Option hedgt, wie berechnet sich die VV-Preiskorrektur, und wann ist Vanna-Volga einem vollständigen stochastischen Volatilitätsmodell für Barriers und Digitals vorzuziehen?"
-
-```yaml
-id: Q23
-domain: derivatives_volatility
-subdomain: exotic_pricing
-source: Taleb_Dynamic_Hedging
-concept_anchor: vanna_volga_pricing
-keywords:
-  - Vanna-Volga Pricing
-  - Vanna
-  - Volga
-  - Vega
-  - exotische Optionen
-  - FX-Optionen
-  - Barrier Optionen
-  - Replikationsportfolio
-  - Greeks zweiter Ordnung
-  - marktimplizite Kalibrierung
-related_concepts:
-  - Stochastische Volatilität
-  - Heston Modell
-  - Black-Scholes Greeks
-difficulty: expert
-```
-
----
-
-## Execution & Hochfrequenzhandel
-
----
-
-### Q24
-**query:** "TWAP vs. VWAP Execution-Strategien — optimale Wahl nach Marktbedingungen: Was sind die strukturellen Unterschiede zwischen Time-Weighted Average Price und Volume-Weighted Average Price Execution, warum ist VWAP bei typischem U-shaped Intraday-Volumenprofil effizienter, wann ist TWAP bei Alpha-Decay und illiquiden Instrumenten vorzuziehen, und wie misst Implementation Shortfall (IS) beide als Spezialfälle eines allgemeinen Kostenrahmens?"
-
-```yaml
-id: Q24
-domain: execution
-subdomain: execution_algorithms
-source: Cartea_Algorithmic_HFT
-concept_anchor: twap_vwap_execution
-keywords:
-  - TWAP
-  - VWAP
-  - Implementation Shortfall
-  - Alpha-Decay
-  - Execution-Algorithmus
-  - Intraday Volumenprofil
-  - Slippage
-  - Benchmark-Kosten
-  - Execution-Strategie
-  - Liquidität
-related_concepts:
-  - Almgren-Chriss
-  - Preisimpact
-  - Order Routing
-difficulty: intermediate
-```
-
----
-
-### Q25
-**query:** "Latency Arbitrage in fragmentierten Märkten — Mechanismus und Schutzmaßnahmen: Wie nutzen HFT-Firmen Preisdivergenz zwischen Handelsplätzen durch Co-Location und Direktverbindungen aus, wie quantifiziert sich der adverse selection Schaden für reguläre algorithmische Trader durch Latency Arbitrage, und welche Marktstruktur-Mechanismen (IEX Speed Bumps, Randomized Delays, Quote-Stuffing-Erkennung) reduzieren diesen Schaden?"
-
-```yaml
-id: Q25
-domain: execution
-subdomain: hft_microstructure
-source: Cartea_Algorithmic_HFT
-concept_anchor: latency_arbitrage
-keywords:
-  - Latency Arbitrage
-  - HFT
-  - Co-Location
-  - Speed Bump
-  - IEX
-  - adverse selection
-  - Marktfragmentierung
-  - Quote Stuffing
-  - Glasfaserverbindung
-  - Preisdivergenz
-related_concepts:
-  - Market Microstructure
-  - Adverse Selection
-  - Market Structure
-difficulty: expert
-```
-
----
-
-### Q26
-**query:** "Empirische Schätzung von permanentem vs. temporärem Preisimpact mit Endogenitätskorrektur: Wie zerlegt man die beobachtete Preisbewegung nach einem Trade in revertierenden temporären Impact und persistenten permanenten Impact, warum ist OLS-Schätzung von Kyle's Lambda durch Endogenität verzerrt (große Trader wählen timing strategisch), welche Instrumentalvariablen-Ansätze (IV) lösen das, und wie validiert man Impact-Schätzungen für Backtesting?"
-
-```yaml
-id: Q26
-domain: execution
-subdomain: price_impact
-source: Cartea_Algorithmic_HFT
-concept_anchor: permanent_temporary_impact
-keywords:
-  - Preisimpact Schätzung
-  - permanenter Preisimpact
-  - temporärer Preisimpact
-  - Endogenität
-  - Instrumentalvariablen
-  - Kyle Lambda
-  - Huber-Regression
-  - Impact-Zerlegung
-  - konkaver Impact
-  - Order Splitting
-related_concepts:
-  - Almgren-Chriss
-  - Kyle Modell
-  - Backtesting
-difficulty: expert
-```
-
----
-
-## Metadaten & Nutzungshinweise
-
-```yaml
-catalog_version: 2.0
-total_questions: 26
-language: de
-optimization_target: chromadb_vector_store
-embedding_model_recommended: text-embedding-3-large
-collection_name: quant_trading_knowledge
-changes_from_v1:
-  - removed_duplicates: 1 (Copula doppelt)
-  - completed_truncated: 1 (Vanna-Volga war unvollständig)
-  - fixed_typos: 2 (Maßnahme, Erklären)
-  - enriched_all_queries: keyword-density erhöht, Konzepte explizit benannt
-  - added_metadata: YAML-Blöcke für ChromaDB-Metadaten-Felder
-  - self_contained: alle Fragen ohne implizite Pronomen reformuliert
-chunking_strategy: one_document_per_question
-metadata_fields_for_chroma:
-  - id
-  - domain
-  - subdomain
-  - source
-  - concept_anchor
-  - keywords (list)
-  - related_concepts (list)
-  - difficulty
+catalog: skill_vwap_mr
+version: "3.0"
+language: en
+total_questions: 32
+variants_per_topic: 2   # B (conceptual) + C (narrative) only — A dropped
+threshold: 0.70
+model: nomic-ai/nomic-embed-text-v1.5
+rationale_english: "Source books are in English — same-language queries score ~5-10% higher"
+rationale_bc_only: "v3 analysis: A produces false positives, B+C open genuine matches"
+best_performing_variant: "C (narrative) — opens most new matches, matches book anecdote style"
 ```

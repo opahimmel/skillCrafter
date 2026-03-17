@@ -20,10 +20,10 @@ from sentence_transformers import SentenceTransformer
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
-CHUNK_SIZE = 512        # Zeichen (nicht Token) – konservativ für nomic
-CHUNK_OVERLAP = 128     # 25% Overlap – verhindert Absatz-Splits
+CHUNK_SIZE = 900        # Zeichen (nicht Token) – größer = vollständigere Passagen
+CHUNK_OVERLAP = 200     # ~22% Overlap – verhindert Absatz-Splits
 CHROMA_PATH = os.path.join(os.path.dirname(__file__), "chroma_db")
-MODEL_NAME = "nomic-ai/nomic-embed-text-v1.5"
+MODEL_NAME = "intfloat/multilingual-e5-base"
 
 
 # ---------------------------------------------------------------------------
@@ -144,7 +144,7 @@ def stable_id(source: str, index: int) -> str:
 def ingest(sources: list[str], collection_name: str, chunk_size: int, overlap: int):
     # Embedding-Modell laden
     print(f"Lade Embedding-Modell '{MODEL_NAME}' ...")
-    model = SentenceTransformer(MODEL_NAME, trust_remote_code=True)
+    model = SentenceTransformer(MODEL_NAME)
 
     # ChromaDB
     client = chromadb.PersistentClient(path=CHROMA_PATH)
@@ -174,8 +174,8 @@ def ingest(sources: list[str], collection_name: str, chunk_size: int, overlap: i
 
         # Embeddings berechnen
         print(f"  Vektorisiere ...")
-        # nomic-embed-text erwartet ein Prefix für asymmetrisches Retrieval
-        prefixed = [f"search_document: {c}" for c in chunks]
+        # multilingual-e5 erwartet ein Prefix für asymmetrisches Retrieval
+        prefixed = [f"passage: {c}" for c in chunks]
         embeddings = model.encode(prefixed, show_progress_bar=True, normalize_embeddings=True)
 
         # In ChromaDB speichern (in Batches um Memory zu schonen)
