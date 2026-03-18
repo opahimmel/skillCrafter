@@ -1,30 +1,88 @@
 # skillCrafter
 
-A local pipeline to extract text passages from PDFs via semantic search. Built on `multilingual-e5-base` (sentence-transformers) and ChromaDB.
+A local pipeline to extract text passages from PDFs via semantic search and distill them into a usable skill document. Built on `multilingual-e5-base` (sentence-transformers) and ChromaDB. No cloud, no API costs.
 
 ---
 
 ## What it does
 
-1. **Ingest:** PDFs are split into chunks, vectorized using an embedding model, and stored in ChromaDB.
+The pipeline has two distinct phases:
 
-2. **Extract:** A questionnaire is analyzed against ChromaDB. For each question, the n most similar text passages are returned—directly from the PDF.
+**Phase 1 — Extraction (automated)**
 
-The quality of the extraction depends almost exclusively on the quality of the questions and the source pdf.
+1. **Ingest:** PDFs are split into chunks, embedded with `multilingual-e5-base`, and stored in a local ChromaDB collection.
+2. **Extract:** A question catalog is run against ChromaDB. Per question, the n most similar passages are returned — directly from the source, no LLM involved.
+3. **Evaluate:** Each returned passage is scored against 5 excellence criteria (see below). Only passages that meet ≥3/5 are kept.
+4. **Accumulate:** Passing passages are written to `insight.md` with score, source, and a short note on why the passage qualifies.
+
+This runs in a loop over multiple iterations. Each iteration generates a new question catalog based on what the previous run found and what it missed.
+
+**Phase 2 — Skill Crafting (Claude Code)**
+
+Once `insight.md` is saturated, Claude Code reads the accumulated passages and builds a `SKILL.md` — a structured, imperative decision document that can be loaded into Claude as a skill.
+
+Claude Code asks 3 questions before building:
+- Who is the user of this skill and in what context?
+- Which thematic cluster of insights to use (or all)?
+- When should Claude activate this skill automatically?
+
+The answers determine the YAML trigger in the frontmatter, the workflow structure, and the imperative framing of the content.
+
+---
+
+## The 5 Excellence Criteria
+
+A passage is kept only if it meets ≥3 of 5:
+
+1. **Mechanism** — explains HOW or WHY something works, not just THAT it does
+2. **Non-trivial** — a competent practitioner would not know this from memory
+3. **Leverage** — knowing this changes a decision, a design, or an action
+4. **Compression loss** — summarizing the passage loses relevant information
+5. **Source-specific** — this is the author's own finding, not generic textbook material
+
+---
+
+## Claude Code Integration
+
+Claude Code acts as the orchestrator for both phases.
+
+**Trigger phrases:**
+
+```
+craft loop starten für <skill_name>   → runs the full extraction loop
+skill bauen für <skill_name>          → builds SKILL.md from insight.md
+```
+
+The craft loop is fully autonomous. Claude Code:
+- Runs `extract.py` per iteration
+- Reads the extraction output and scores each passage
+- Writes passing passages to `insight.md`
+- Writes a critique to `run_log.md` (what worked, what didn't, what to ask next)
+- Rewrites `questions.md` for the next iteration
+- After the final iteration: evaluates yield trend and recommends STOP or CONTINUE
+
+The behavior is defined in `CLAUDE.md`.
+
+**What Claude Code does NOT do:**
+- It does not invent or paraphrase passages. All content in `insight.md` is verbatim from the sources.
+- It does not run ingest more than once per skill.
+- It does not generate questions to hit a target count — only as many as there are genuine new angles.
 
 ---
 
 ## Tech Stack
 
-| Komponente | Technologie |
+| Component | Technology |
 |---|---|
-| Embedding-Modell | `intfloat/multilingual-e5-base` (lokal via sentence-transformers) |
-| Vektordatenbank | ChromaDB (PersistentClient, lokal) |
-| PDF-Parsing | pypdf |
+| Embedding model | `intfloat/multilingual-e5-base` (local via sentence-transformers) |
+| Vector database | ChromaDB (PersistentClient, local) |
+| PDF parsing | pypdf |
+| Orchestrator | Claude Code (reads CLAUDE.md for loop behavior) |
 | Python | 3.12 |
 
+**Why multilingual-e5-base:** Supports cross-lingual retrieval. German queries against English sources lose 15–20% similarity score with English-only models (e.g. nomic-embed-text). e5-base closes this gap.
 
-Prefix-Schema: `query: <frage>` beim Retrieval, `passage: <text>` beim Ingest.
+Prefix schema: `query: <question>` for retrieval, `passage: <text>` for ingest.
 
 ---
 
@@ -36,56 +94,47 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Erster Start lädt `multilingual-e5-base` (~1.1GB) von HuggingFace.
+First run downloads `multilingual-e5-base` (~1.1GB) from HuggingFace.
 
 ---
 
 ## Quickstart
 
 ```bash
+# Manual mode
 python skill.py new my_skill
 cp /path/to/book.pdf skills/my_skill/sources/
-# questions.md befüllen (siehe unten)
+# fill questions.md
 python skill.py ingest my_skill
 python skill.py extract my_skill
-python skill.py curate my_skill
+
+# Autonomous mode (requires Claude Code)
+# 1. Place PDFs in skills/my_skill/sources/
+# 2. Run: craft loop starten für my_skill
+# 3. When done: skill bauen für my_skill
 ```
 
 ---
 
-## Question Format — the Crucial Part
+## Question Format
 
-ChromaDB retrieves passages based on cosine similarity between the query embedding and the document embedding. What it returns is the text that is closest to the embedding of the question — not necessarily the text that actually answers the question.
+ChromaDB finds passages via cosine similarity between query embedding and document embedding. The returned text is what is closest to the query in embedding space — not what answers the question semantically.
 
-This means: vague questions yield topically similar but substantively useless passages. Precise, keyword-dense questions yield the correct chunks.
+Vague questions return thematically similar but informationally useless passages. Precise, keyword-dense questions return the right chunks.
 
-**Einfaches Format:**
+**Simple format:**
 ```markdown
-- Was sind die Kernprinzipien von X?
-- Wann versagt dieser Ansatz?
+- When does approach X fail despite correct inputs?
+- What does an expert in X know that beginners consistently get wrong?
 ```
 
-**RAG-optimiertes Format** (höhere Retrieval-Scores, empfohlen):
+**RAG-optimized format** (higher retrieval scores, recommended):
 ```markdown
-## Abschnitt
-
 ### Q01
-**query:** "Keyword-dichte, selbstständige Frage ohne Pronomen — alle Konzepte explizit benannt..."
+**query:** "Keyword-dense, self-contained question without pronouns — all concepts named explicitly..."
 ```
 
-```yaml
-id: Q01
-category: risk
-concept_anchor: stop_loss_noise_calibration
-keywords:
-  - Stop Loss Kalibrierung
-  - ATR-basierter Stop
-  - Bid-Ask Rauschen
-```
-
-
-
-Vollständige Anleitung: [QUESTION_CRAFTING.md](QUESTION_CRAFTING.md)
+Full guide: [QUESTION_CRAFTING.md](QUESTION_CRAFTING.md)
 
 ---
 
@@ -105,34 +154,35 @@ python skill.py delete <name>
 
 ---
 
-## Score-Interpretation
+## Score Interpretation
 
-| Score | Label | Bedeutung |
+| Score | Label | Meaning |
 |---|---|---|
-| ≥ 0.75 | STARK | Passage direkt verwenden |
-| 0.70–0.74 | AUSREICHEND | Passage prüfen |
-| < 0.70 | — | Wird nicht ausgegeben — kein ausreichender Match |
+| ≥ 0.75 | STARK | Use passage directly |
+| 0.70–0.74 | AUSREICHEND | Review before using |
+| < 0.70 | — | Not returned — insufficient match |
 
-
-
----
-
-## Ingest-Filter
-
-Noise wird automatisch beim Ingest entfernt:
-
-- Bibliographie-Abschnitte (Parsing stoppt beim ersten References-Header)
-- Front-Matter: TOC, Vorwort, Inhaltsverzeichnis
-- Chunks mit >40% Zeilen die auf Seitenzahlen enden
-- Chunks unter 150 Zeichen oder mit >40% Ziffern
-- Chunks mit >50% Citation-Pattern-Zeilen
+Scores below threshold do not indicate a system error. The relevant content may simply not be in the source material.
 
 ---
 
-## Projektstruktur
+## Ingest Filters
+
+Noise is removed automatically during ingest:
+
+- Bibliography sections (parsing stops at first References header)
+- Front matter: TOC, preface, table of contents
+- Chunks with >40% lines ending in page numbers
+- Chunks under 150 characters or with >40% digits
+- Chunks with >50% citation-pattern lines
+
+---
+
+## Project Structure
 
 ```
 skillCrafter/
+├── CLAUDE.md           ← loop behavior and skill crafting instructions for Claude Code
 ├── skill.py
 ├── ingest.py
 ├── extract.py
@@ -140,11 +190,15 @@ skillCrafter/
 ├── requirements.txt
 └── skills/
     └── <skill_name>/
-        ├── questions.md    ← ins Git
-        ├── skill.md        ← ins Git
-        ├── sources/        ← PDFs, nicht im Git
-        ├── extractions/    ← nicht im Git
-        └── curated/        ← nicht im Git
+        ├── sources/        ← PDFs (not in git)
+        ├── extractions/    ← timestamped extraction files (not in git)
+        ├── questions.md    ← current question catalog (overwritten each run)
+        ├── insight.md      ← accumulated excellence passages (append-only)
+        ├── run_log.md      ← per-run critique and hypotheses
+        ├── craftplan.md    ← status and configuration
+        ├── SKILL.md        ← finished skill document
+        └── references/
+            └── insights.md ← copy of insight.md for SKILL.md reference
 ```
 
 ---
