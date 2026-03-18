@@ -102,21 +102,29 @@ First run downloads `multilingual-e5-base` (~1.1GB) from HuggingFace.
 
 ---
 
-## Quickstart
+## Usage
 
+**Step 1 — Initialize the skill**
 ```bash
-# Manual mode
-python skill.py new my_skill
-cp /path/to/book.pdf skills/my_skill/sources/
-# fill questions.md
-python skill.py ingest my_skill
-python skill.py extract my_skill
-
-# Autonomous mode (requires Claude Code)
-# 1. Place PDFs in skills/my_skill/sources/
-# 2. Run: craft loop starten für my_skill
-# 3. When done: skill bauen für my_skill
+python craft_init.py --skill [name]
 ```
+
+**Step 2 — Add your PDFs**
+```
+skills/[name]/sources/*.pdf
+```
+
+**Step 3 — Start Claude Code, then say:**
+```
+craft loop starten für [name]
+```
+Claude Code asks once for a one-sentence skill description, then runs the extraction loop autonomously through N iterations. Each iteration it generates questions, retrieves passages, scores them, and updates `insight.md` with the passages that pass the excellence filter.
+
+**Step 4 — Build the skill**
+```
+skill bauen für [name]
+```
+Claude Code clusters the collected insights, asks 3 questions about the intended use, and writes `SKILL.md` — ready to be placed in `~/.claude/skills/`.
 
 ---
 
