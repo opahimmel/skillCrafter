@@ -8,14 +8,18 @@ A local pipeline to extract text passages from PDFs via semantic search and dist
 
 The pipeline has two distinct phases:
 
-**Phase 1 — Extraction (automated)**
+**Phase 1 — Extraction (Claude Code orchestrated)**
 
-1. **Ingest:** PDFs are split into chunks, embedded with `multilingual-e5-base`, and stored in a local ChromaDB collection.
-2. **Extract:** A question catalog is run against ChromaDB. Per question, the n most similar passages are returned — directly from the source, no LLM involved.
-3. **Evaluate:** Each returned passage is scored against 5 excellence criteria (see below). Only passages that meet ≥3/5 are kept.
-4. **Accumulate:** Passing passages are written to `insight.md` with score, source, and a short note on why the passage qualifies.
+Claude Code runs this phase autonomously. Its role is central: it generates the questions, evaluates the results, and decides what to ask next.
 
-This runs in a loop over multiple iterations. Each iteration generates a new question catalog based on what the previous run found and what it missed.
+1. **Ingest:** PDFs are split into chunks, embedded with `multilingual-e5-base`, and stored in a local ChromaDB collection. Runs once per skill.
+2. **Question generation:** Claude Code writes the question catalog for each iteration — starting broad, then narrowing based on what previous runs found and what they missed. No questions are generated to fill a count; only as many as there are genuine new angles.
+3. **Extract:** The question catalog is run against ChromaDB via `extract.py`. Per question, the n most similar passages are returned — directly from the source, no LLM involved in retrieval.
+4. **Evaluate:** Claude Code reads every returned passage and scores it against 5 excellence criteria (see below). Only passages that meet ≥3/5 are kept.
+5. **Accumulate:** Passing passages are written to `insight.md` with score, source, and a note on why the passage qualifies.
+6. **Critique:** Claude Code writes a per-run critique to `run_log.md` — which questions worked, which didn't, what was missed, and what hypotheses to test next.
+
+This loop runs for N iterations. After the final iteration Claude Code evaluates whether the sources are exhausted or further runs would still yield new excellence.
 
 **Phase 2 — Skill Crafting (Claude Code)**
 
