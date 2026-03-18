@@ -7,10 +7,16 @@ __pycache__/
 # Lokale Datenbank
 chroma_db/
 
-# PDFs & persönliche Inhalte
+# Skill-Inhalte (persönlich, nicht im öffentlichen Repo)
 skills/*/sources/
 skills/*/extractions/
 skills/*/curated/
+skills/*/insight.md
+skills/*/run_log.md
+skills/*/craftplan.md
+skills/*/questions.md
+skills/*/SKILL.md
+skills/*/references/
 sources/
 output/
 
