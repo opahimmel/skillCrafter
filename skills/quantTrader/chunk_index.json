@@ -1,0 +1,502 @@
+{
+  "Machine Learning for Asset Managers -- López de Prado:30": {
+    "insight": 1,
+    "score": 5,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:548": {
+    "insight": 2,
+    "score": 5,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:294": {
+    "insight": 3,
+    "score": 5,
+    "run": 1
+  },
+  "Machine Learning for Asset Managers -- López de Prado:73": {
+    "insight": 4,
+    "score": 5,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1633": {
+    "insight": 5,
+    "score": 5,
+    "run": 1
+  },
+  "Machine Learning for Asset Managers -- López de Prado:322": {
+    "insight": 6,
+    "score": 5,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1643": {
+    "insight": 7,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1779": {
+    "insight": 8,
+    "score": 4,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:301": {
+    "insight": 9,
+    "score": 4,
+    "run": 1
+  },
+  "Machine Learning for Asset Managers -- López de Prado:31": {
+    "insight": 10,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1101": {
+    "insight": 11,
+    "score": 4,
+    "run": 1
+  },
+  "Trading and Exchanges -- Harris:1920": {
+    "insight": 12,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1225": {
+    "insight": 13,
+    "score": 4,
+    "run": 1
+  },
+  "Systematic Trading -- Carver:421": {
+    "insight": 14,
+    "score": 4,
+    "run": 1
+  },
+  "Systematic Trading -- Carver:427": {
+    "insight": 15,
+    "score": 4,
+    "run": 1
+  },
+  "Advances in Financial ML -- López de Prado:55": {
+    "insight": 16,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1982": {
+    "insight": 17,
+    "score": 4,
+    "run": 1
+  },
+  "Trading and Exchanges -- Harris:1974": {
+    "insight": 18,
+    "score": 4,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:28": {
+    "insight": 19,
+    "score": 4,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:93": {
+    "insight": 20,
+    "score": 4,
+    "run": 1
+  },
+  "Systematic Trading -- Carver:192": {
+    "insight": 21,
+    "score": 4,
+    "run": 1
+  },
+  "Advances in Financial ML -- López de Prado:64": {
+    "insight": 22,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1295": {
+    "insight": 23,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1910": {
+    "insight": 24,
+    "score": 4,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:486": {
+    "insight": 25,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1279": {
+    "insight": 26,
+    "score": 4,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:187": {
+    "insight": 27,
+    "score": 4,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:283": {
+    "insight": 28,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1159": {
+    "insight": 29,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:1210": {
+    "insight": 30,
+    "score": 4,
+    "run": 1
+  },
+  "Expected Returns -- Ilmanen:491": {
+    "insight": 31,
+    "score": 3,
+    "run": 1
+  },
+  "Trading and Exchanges -- Harris:1922": {
+    "insight": 32,
+    "score": 3,
+    "run": 1
+  },
+  "Algorithmic Trading Systems -- Dolzhenko:129": {
+    "insight": 33,
+    "score": 3,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:174": {
+    "insight": 34,
+    "score": 3,
+    "run": 1
+  },
+  "Trading and Exchanges -- Harris:1445": {
+    "insight": 35,
+    "score": 3,
+    "run": 1
+  },
+  "High-frequency trading:14": {
+    "insight": 36,
+    "score": 3,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:48": {
+    "insight": 37,
+    "score": 3,
+    "run": 1
+  },
+  "Machine Learning for Asset Managers -- López de Prado:331": {
+    "insight": 38,
+    "score": 3,
+    "run": 1
+  },
+  "Trading and Exchanges -- Harris:1444": {
+    "insight": 39,
+    "score": 3,
+    "run": 1
+  },
+  "High-frequency trading:0": {
+    "insight": 40,
+    "score": 3,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:32": {
+    "insight": 41,
+    "score": 3,
+    "run": 1
+  },
+  "Systematic Trading -- Carver:210": {
+    "insight": 42,
+    "score": 3,
+    "run": 1
+  },
+  "Systematic Trading -- Carver:137": {
+    "insight": 43,
+    "score": 3,
+    "run": 1
+  },
+  "Algorithmic Trading -- Chan:566": {
+    "insight": 44,
+    "score": 5,
+    "run": 2
+  },
+  "The Volatility Surface -- Gatheral:202": {
+    "insight": 45,
+    "score": 5,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1104": {
+    "insight": 46,
+    "score": 5,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:536": {
+    "insight": 47,
+    "score": 5,
+    "run": 2
+  },
+  "Systematic Trading -- Carver:417": {
+    "insight": 48,
+    "score": 5,
+    "run": 2
+  },
+  "Trading and Exchanges -- Harris:1964": {
+    "insight": 49,
+    "score": 5,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:451": {
+    "insight": 50,
+    "score": 5,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1158": {
+    "insight": 51,
+    "score": 4,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1539": {
+    "insight": 52,
+    "score": 4,
+    "run": 2
+  },
+  "The Volatility Surface -- Gatheral:244": {
+    "insight": 53,
+    "score": 4,
+    "run": 2
+  },
+  "Gatheral et al. Volatility is Rough:13": {
+    "insight": 54,
+    "score": 4,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:513": {
+    "insight": 55,
+    "score": 4,
+    "run": 2
+  },
+  "Systematic Trading -- Carver:418": {
+    "insight": 56,
+    "score": 4,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1098": {
+    "insight": 57,
+    "score": 4,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:506": {
+    "insight": 58,
+    "score": 4,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1630": {
+    "insight": 59,
+    "score": 4,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1566": {
+    "insight": 60,
+    "score": 4,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:284": {
+    "insight": 61,
+    "score": 4,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1927": {
+    "insight": 62,
+    "score": 4,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:443": {
+    "insight": 63,
+    "score": 4,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1308": {
+    "insight": 64,
+    "score": 3,
+    "run": 2
+  },
+  "Gatheral et al. Volatility is Rough:68": {
+    "insight": 65,
+    "score": 3,
+    "run": 2
+  },
+  "Systematic Trading -- Carver:576": {
+    "insight": 66,
+    "score": 3,
+    "run": 2
+  },
+  "Algorithmic Trading -- Chan:137": {
+    "insight": 67,
+    "score": 3,
+    "run": 2
+  },
+  "Systematic Trading -- Carver:424": {
+    "insight": 68,
+    "score": 3,
+    "run": 2
+  },
+  "Expected Returns -- Ilmanen:1255": {
+    "insight": 69,
+    "score": 3,
+    "run": 2
+  },
+  "Chan:274": {
+    "insight": 70,
+    "score": 3,
+    "run": 3
+  },
+  "Harris:2153": {
+    "insight": 71,
+    "score": 3,
+    "run": 3
+  },
+  "Carver:328": {
+    "insight": 72,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1292": {
+    "insight": 73,
+    "score": 3,
+    "run": 3
+  },
+  "Chan:545": {
+    "insight": 74,
+    "score": 3,
+    "run": 3
+  },
+  "Carver:408": {
+    "insight": 75,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1562": {
+    "insight": 76,
+    "score": 3,
+    "run": 3
+  },
+  "Chan:539": {
+    "insight": 77,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1721": {
+    "insight": 78,
+    "score": 4,
+    "run": 3
+  },
+  "Ilmanen:1279": {
+    "insight": 79,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1237": {
+    "insight": 80,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1158": {
+    "insight": 81,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1343": {
+    "insight": 82,
+    "score": 3,
+    "run": 3
+  },
+  "Ilmanen:1342": {
+    "insight": 83,
+    "score": 3,
+    "run": 3
+  },
+  "Chan:491": {
+    "insight": 84,
+    "score": 4,
+    "run": 3
+  },
+  "Chan:566": {
+    "insight": 85,
+    "score": 4,
+    "run": 3
+  },
+  "Ilmanen:624": {
+    "insight": 86,
+    "score": 4,
+    "run": 3
+  },
+  "Harris:1908": {
+    "insight": 87,
+    "score": 3,
+    "run": 3
+  },
+  "Carver:486": {
+    "insight": 88,
+    "score": 3,
+    "run": 3
+  },
+  "Harris:1964": {
+    "insight": 89,
+    "score": 3,
+    "run": 4
+  },
+  "Carver:427": {
+    "insight": 90,
+    "score": 4,
+    "run": 4
+  },
+  "Carver:418": {
+    "insight": 91,
+    "score": 4,
+    "run": 4
+  },
+  "Chan:514": {
+    "insight": 92,
+    "score": 3,
+    "run": 4
+  },
+  "HFT:14": {
+    "insight": 93,
+    "score": 3,
+    "run": 4
+  },
+  "Chan:513": {
+    "insight": 94,
+    "score": 4,
+    "run": 4
+  },
+  "Ilmanen:1927": {
+    "insight": 95,
+    "score": 3,
+    "run": 4
+  },
+  "Harris:1681": {
+    "insight": 96,
+    "score": 3,
+    "run": 4
+  },
+  "Ilmanen:1984": {
+    "insight": 97,
+    "score": 4,
+    "run": 4
+  },
+  "Chan:492": {
+    "insight": 98,
+    "score": 3,
+    "run": 4
+  },
+  "Carver:265": {
+    "insight": 99,
+    "score": 3,
+    "run": 5
+  },
+  "Ilmanen:375": {
+    "insight": 100,
+    "score": 4,
+    "run": 5
+  }
+}

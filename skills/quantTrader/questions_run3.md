@@ -1,0 +1,10 @@
+- Welche Fehler entstehen beim Übergang von simuliertem zu echtem Portfolio-Rebalancing?
+- Wie quantifiziert man Implementation Shortfall zwischen Backtest-Preis und Execution-Preis konkret?
+- Wann versagen Volatility-Targets in Gapping-Märkten und wie wird Overnight-Gap-Risk limitiert?
+- Welche Drawdown-Management-Techniken sind superior zu mechanischem Deleveraging?
+- Variance-Risk-Premium: Warum sind realisierte Volatilitäten systematisch unter implied Volatilitäten?
+- Wie erkennt man ein Momentum-Crash-Regime im echten Markt bevor Losses kumulieren?
+- Welche Marktstruktur-Signale deuten auf bevorstehenden Momentum-Reversal hin?
+- Warum schlagen pre-crisis Indikatoren fehl wenn Stress eintritt?
+- Wie werden dynamische Position-Limits statt statische Limits bei Live-Risiken gesetzt?
+- Welche Korrelations-Breaks sind Warnsignale versus normale Marktvolatilität?

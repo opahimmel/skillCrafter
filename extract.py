@@ -5,26 +5,34 @@ Usage:
     python extract.py --collection quant_trading \
                       --catalog catalog/questions.md \
                       --output output/raw_extractions/
+
+    # Kompaktes Format für den Craft Loop (weniger Tokens):
+    python extract.py --collection quant_trading \
+                      --catalog catalog/questions.md \
+                      --output output/raw_extractions/ \
+                      --compact
 """
 
 import argparse
+import json
 import os
 import re
 import sys
 from datetime import datetime
 
 import chromadb
-from sentence_transformers import SentenceTransformer
+from sentence_transformers import CrossEncoder, SentenceTransformer
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 CHROMA_PATH = os.path.join(os.path.dirname(__file__), "chroma_db")
 MODEL_NAME = "intfloat/multilingual-e5-base"
+RERANK_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 TOP_K = 10
+RERANK_TOP_N = 5
 MIN_SCORE = 0.70
 SCORE_STRONG = 0.75
-MAX_CHUNKS_PER_SOURCE = 2
 
 
 # ---------------------------------------------------------------------------
@@ -33,16 +41,18 @@ MAX_CHUNKS_PER_SOURCE = 2
 
 def parse_questions(catalog_path: str) -> list[dict]:
     """
-    Liest Fragen aus einem Markdown-Katalog.
-    Unterstützt zwei Formate:
-      Format A (einfach):   - Frage als Bullet Point
-      Format B (RAG-opt.):  **query:** "Frage als langer Text"
+    Liest Probes aus einem Markdown-Katalog.
+    Unterstützt drei Formate:
+      Format A (einfach):     - Frage als Bullet Point
+      Format B (RAG-opt.):    **query:** "Frage als langer Text"
+      Format C (Multi-Probe): - FRAGE: ... / - STATEMENT: ... / - KEYWORDS: ...
     Abschnitte werden über ## Heading erkannt.
     """
     questions = []
     current_section = "Allgemein"
 
     _query_line = re.compile(r'^\*\*query:\*\*\s*"?(.+?)"?\s*$')
+    _probe_line = re.compile(r'^-\s+(FRAGE|STATEMENT|KEYWORDS):\s*(.+)$')
 
     with open(catalog_path, encoding="utf-8") as f:
         for line in f:
@@ -52,6 +62,16 @@ def parse_questions(catalog_path: str) -> list[dict]:
                 current_section = line[3:].strip()
             elif line.startswith("# "):
                 current_section = line[2:].strip()
+            # Format C: Multi-Probe (FRAGE/STATEMENT/KEYWORDS)
+            elif m := _probe_line.match(line):
+                probe_type = m.group(1)
+                probe_text = m.group(2).strip()
+                if probe_text:
+                    questions.append({
+                        "section": current_section,
+                        "question": probe_text,
+                        "probe_type": probe_type,
+                    })
             # Format B: **query:** "..."
             elif m := _query_line.match(line):
                 question = m.group(1).strip()
@@ -70,10 +90,13 @@ def parse_questions(catalog_path: str) -> list[dict]:
 # Extraktion
 # ---------------------------------------------------------------------------
 
-def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int, min_score: float = 0.0):
-    # Modell laden
+def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int,
+            min_score: float = 0.0, compact: bool = False):
+    # Modelle laden
     print(f"Lade Embedding-Modell '{MODEL_NAME}' ...")
     model = SentenceTransformer(MODEL_NAME)
+    print(f"Lade Reranker '{RERANK_MODEL}' ...")
+    reranker = CrossEncoder(RERANK_MODEL)
 
     # ChromaDB
     client = chromadb.PersistentClient(path=CHROMA_PATH)
@@ -92,7 +115,9 @@ def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int
 
     print(f"{len(questions)} Fragen geladen aus '{catalog_path}'")
     print(f"Collection: '{collection_name}' ({collection.count()} Chunks)")
-    print(f"Min-Score: >= {min_score} | Max pro Quelle: {MAX_CHUNKS_PER_SOURCE}")
+    print(f"Retrieval: Top-{top_k} → Rerank → Top-{RERANK_TOP_N} | Min-Score: >= {min_score}")
+    if compact:
+        print("Modus: KOMPAKT (für Craft Loop)")
     print()
 
     os.makedirs(output_dir, exist_ok=True)
@@ -101,24 +126,30 @@ def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int
     run_ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = os.path.join(output_dir, f"{collection_name}_{run_ts}.md")
 
+    # Im Kompakt-Modus: JSON-Sidecar mit Chunk-IDs für Duplikat-Check
+    all_passages = []  # für JSON-Sidecar
+
     with open(output_file, "w", encoding="utf-8") as out:
-        out.write(f"# Extraktion: {collection_name}\n")
-        out.write(f"Katalog: `{catalog_path}`  \n")
-        out.write(f"Datum: {datetime.now().strftime('%Y-%m-%d %H:%M')}  \n")
-        out.write(f"Top-K: {top_k}  \n\n---\n\n")
+        if compact:
+            out.write(f"# {collection_name} | {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n")
+        else:
+            out.write(f"# Extraktion: {collection_name}\n")
+            out.write(f"Katalog: `{catalog_path}`  \n")
+            out.write(f"Datum: {datetime.now().strftime('%Y-%m-%d %H:%M')}  \n")
+            out.write(f"Top-K: {top_k}  \n\n---\n\n")
 
         current_section = None
 
         for i, item in enumerate(questions, 1):
             # Abschnitts-Header schreiben wenn neu
-            if item["section"] != current_section:
+            if not compact and item["section"] != current_section:
                 current_section = item["section"]
                 out.write(f"## {current_section}\n\n")
 
             question = item["question"]
             print(f"[{i}/{len(questions)}] {question}")
 
-            # Query-Embedding (nomic asymmetrisches Retrieval: query prefix)
+            # Query-Embedding (multilingual-e5 asymmetrisches Retrieval: query prefix)
             query_embedding = model.encode(
                 f"query: {question}",
                 normalize_embeddings=True,
@@ -130,40 +161,84 @@ def extract(collection_name: str, catalog_path: str, output_dir: str, top_k: int
                 include=["documents", "metadatas", "distances"],
             )
 
-            out.write(f"### Frage {i}: {question}\n\n")
-
             docs = results["documents"][0]
             metas = results["metadatas"][0]
             distances = results["distances"][0]
 
+            if compact:
+                out.write(f"## Q{i}: {question}\n")
+            else:
+                out.write(f"### Frage {i}: {question}\n\n")
+
             if not docs:
-                out.write("_Keine Passagen gefunden._\n\n")
+                if compact:
+                    out.write("KEINE TREFFER\n\n")
+                else:
+                    out.write("_Keine Passagen gefunden._\n\n")
                 continue
 
-            written = 0
-            source_counts: dict[str, int] = {}
-            for rank, (doc, meta, dist) in enumerate(zip(docs, metas, distances), 1):
+            # Pre-filter: nur Kandidaten über min_score
+            candidates = []
+            for doc, meta, dist in zip(docs, metas, distances):
                 similarity = round(1 - dist, 4)
-                if similarity < min_score:
-                    continue
-                source = meta.get("source", "unbekannt")
-                if source_counts.get(source, 0) >= MAX_CHUNKS_PER_SOURCE:
-                    continue
-                source_counts[source] = source_counts.get(source, 0) + 1
-                chunk_idx = meta.get("chunk_index", "?")
+                if similarity >= min_score:
+                    candidates.append({"doc": doc, "meta": meta, "similarity": similarity})
 
-                written += 1
-                if similarity >= SCORE_STRONG:
-                    score_label = "STARK"
+            if not candidates:
+                if compact:
+                    out.write(f"KEIN MATCH (alle unter {min_score})\n\n")
                 else:
-                    score_label = "AUSREICHEND"
-                out.write(f"**Passage {written}** | Quelle: `{source}` | Chunk #{chunk_idx} | Score: {similarity} [{score_label}]\n\n")
-                out.write(f"> {doc.strip()}\n\n")
+                    out.write(f"_KEIN AUSREICHENDER MATCH — alle {len(docs)} Kandidaten unter Score {min_score}. Wissenslücke in der Bibliothek oder Frage zu spezifisch._\n\n")
+                continue
 
-            if written == 0:
-                out.write(f"_KEIN AUSREICHENDER MATCH — alle {len(docs)} Kandidaten unter Score {min_score}. Wissenslücke in der Bibliothek oder Frage zu spezifisch._\n\n")
+            # Reranking: Cross-Encoder bewertet Query+Passage gemeinsam
+            pairs = [[question, c["doc"]] for c in candidates]
+            rerank_scores = reranker.predict(pairs)
+            for idx, c in enumerate(candidates):
+                c["rerank_score"] = float(rerank_scores[idx])
+            candidates.sort(key=lambda c: c["rerank_score"], reverse=True)
+            candidates = candidates[:RERANK_TOP_N]
 
-            out.write("---\n\n")
+            written = 0
+            for c in candidates:
+                source = c["meta"].get("source", "unbekannt")
+                chunk_idx = c["meta"].get("chunk_index", "?")
+                chunk_id = f"{source}:{chunk_idx}"
+                written += 1
+
+                # Für JSON-Sidecar sammeln
+                all_passages.append({
+                    "chunk_id": chunk_id,
+                    "question_idx": i,
+                    "question": question,
+                    "similarity": c["similarity"],
+                    "rerank_score": c["rerank_score"],
+                    "source": source,
+                    "chunk_index": chunk_idx,
+                })
+
+                if compact:
+                    out.write(f"[{chunk_id}|cos={c['similarity']}|rr={c['rerank_score']:.3f}] ")
+                    out.write(f"{c['doc'].strip()}\n\n")
+                else:
+                    score_label = "STARK" if c["similarity"] >= SCORE_STRONG else "AUSREICHEND"
+                    out.write(f"**Passage {written}** | Quelle: `{source}` | Chunk #{chunk_idx} | Cosine: {c['similarity']} [{score_label}] | Rerank: {c['rerank_score']:.3f}\n\n")
+                    out.write(f"> {c['doc'].strip()}\n\n")
+
+            if not compact:
+                out.write("---\n\n")
+
+    # JSON-Sidecar speichern (für programmatischen Duplikat-Check)
+    if compact:
+        sidecar_file = output_file.replace(".md", ".json")
+        with open(sidecar_file, "w", encoding="utf-8") as f:
+            json.dump({
+                "collection": collection_name,
+                "timestamp": run_ts,
+                "total_passages": len(all_passages),
+                "passages": all_passages,
+            }, f, indent=2, ensure_ascii=False)
+        print(f"Sidecar gespeichert: {sidecar_file}")
 
     print(f"\nFertig. Extraktion gespeichert: {output_file}")
 
@@ -184,13 +259,15 @@ def main():
                         help=f"Anzahl Kandidaten die abgerufen werden (default: {TOP_K})")
     parser.add_argument("--min-score", type=float, default=MIN_SCORE,
                         help=f"Minimaler Similarity-Score – unter diesem Wert = kein Match (default: {MIN_SCORE})")
+    parser.add_argument("--compact", action="store_true",
+                        help="Kompaktes Output-Format für den Craft Loop (weniger Tokens, JSON-Sidecar)")
     args = parser.parse_args()
 
     if not os.path.isfile(args.catalog):
         print(f"[FEHLER] Katalog nicht gefunden: {args.catalog}", file=sys.stderr)
         sys.exit(1)
 
-    extract(args.collection, args.catalog, args.output, args.top_k, args.min_score)
+    extract(args.collection, args.catalog, args.output, args.top_k, args.min_score, args.compact)
 
 
 if __name__ == "__main__":

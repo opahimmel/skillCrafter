@@ -1,0 +1,5 @@
+- Wie werden reale Slippage-Daten aus Broker-Logs in Backtest-Realismusgrad übertragen?
+- Welche Stress-Test-Szenarien sind predictive für echte Drawdowns versus Konfabulationen?
+- Operational Risk in Algos: Welche Fehler sind kritisch vs. tolerierbar in Live-Produktion?
+- Wann ist Portfolio-Diversifikation eine Illusion unter Stress?
+- Wie wird Signal-Decay gemessen wenn Backtest-Daten veralten?

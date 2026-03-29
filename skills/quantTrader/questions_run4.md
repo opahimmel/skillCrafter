@@ -1,0 +1,8 @@
+- Execution-Algorithmen: VWAP vs TWAP vs Implementation Shortfall trade-offs bei verschiedenen Liquiditätszuständen
+- Wie wird eine laufende Strategie im Live-Markt gegen neues Regime-Shift-Risiko gehärtet?
+- Antifragility in Portfolios: Welche Positionen profitieren tatsächlich von Crashes?
+- Warum bricht Cointegration in Stress-Perioden zusammen und wie wird das gelöst?
+- Kelly-Fraction in Echtzeit: Wie wird sie angepasst wenn realisierte Volatilität spike?
+- Market-Impact-Modelle: Permanent vs Temporary Impact bei größeren Positionen im Algo
+- Welche Execution-Fehler entstehen spezifisch bei hochfrequentem Rebalancing?
+- Feedback-Loops in Liquidationen: Wie wird eigene Position-Unwind vor Markt-Ansteckung geschützt?

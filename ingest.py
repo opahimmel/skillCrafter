@@ -14,6 +14,7 @@ import re
 import sys
 
 import chromadb
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 
@@ -121,13 +122,14 @@ def load_pdf(path: str) -> str:
 
 
 def chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OVERLAP) -> list[str]:
-    """Teilt Text in überlappende Chunks."""
-    chunks = []
-    start = 0
-    while start < len(text):
-        end = start + chunk_size
-        chunks.append(text[start:end])
-        start += chunk_size - overlap
+    """Teilt Text in überlappende Chunks an semantischen Grenzen (Absatz > Satz > Wort)."""
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=overlap,
+        separators=["\n\n", "\n", ". ", "? ", "! ", "; ", ", ", " ", ""],
+        keep_separator=True,
+    )
+    chunks = splitter.split_text(text)
     return [c.strip() for c in chunks if c.strip()]
 
 
